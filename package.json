@@ -1,0 +1,12 @@
+{
+  "name": "web-based-ar-toolkit",
+  "version": "1.0.0",
+  "description": "A minimal web-based sandbox for placing 3D assets on a canvas and exporting their positions as JSON.",
+  "scripts": {
+    "generate": "node generate-models.mjs"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.3.0",
+    "three": "^0.183.2"
+  }
+}

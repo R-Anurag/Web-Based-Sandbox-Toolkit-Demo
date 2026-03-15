@@ -1,0 +1,397 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #0f0f13;
+  color: #e0e0e0;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  width: 160px;
+  background: #1a1a24;
+  border-right: 1px solid #2e2e42;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 12px;
+  flex-shrink: 0;
+}
+
+#sidebar h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+/* 1. Per-type color identity */
+.asset {
+  position: relative;
+  background: #1e1e2e;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  cursor: grab;
+  user-select: none;
+  transition: background .15s, transform .12s, box-shadow .15s;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.asset:hover {
+  background: color-mix(in srgb, var(--accent) 12%, #1e1e2e);
+  box-shadow: 0 0 0 1px var(--accent);
+  transform: scale(1.04);
+}
+
+.asset:active { cursor: grabbing; }
+.asset .icon  { font-size: 26px; display: block; margin-bottom: 4px; }
+
+/* 3. Count badges */
+.asset-badge {
+  position: absolute;
+  top: -6px; right: -6px;
+  min-width: 18px; height: 18px;
+  background: var(--accent);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 9px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ── Main area ── */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 6. Toolbar hierarchy */
+#toolbar {
+  background: #1a1a24;
+  border-bottom: 1px solid #2e2e42;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+}
+
+#toolbar-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 13px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+
+.btn-primary {
+  background: #3b3bff;
+  color: #fff;
+}
+.btn-primary:hover { background: #5555ff; box-shadow: 0 0 0 2px rgba(59,59,255,.35); }
+
+.btn-ghost {
+  background: transparent;
+  color: #666;
+  border: 1px solid #2e2e42;
+}
+.btn-ghost:hover { background: #2e2e42; color: #ccc; }
+
+/* 2. Properties strip */
+#props {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #aaa;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.props-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.props-type {
+  font-weight: 600;
+  color: #e0e0e0;
+  text-transform: capitalize;
+}
+
+.props-sep { color: #444; }
+
+.props-field { color: #888; }
+.props-field b { color: #ccc; font-weight: 500; }
+
+.props-hint { color: #444; font-size: 11px; margin-left: 4px; }
+
+/* ── Canvas ── */
+#canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-color: #13131c;
+}
+
+#canvas.drag-over { outline: 2px dashed #3b3bff; outline-offset: -4px; }
+
+/* 4. Empty state */
+#empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  pointer-events: none;
+  animation: fadeIn .3s ease;
+}
+
+.empty-icon { font-size: 48px; opacity: .25; }
+
+#empty-state p {
+  font-size: 13px;
+  color: #444;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── Placed items ── */
+/* 5. Scale-in / scale-out animations */
+@keyframes placeIn {
+  from { transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(0.5); opacity: 0; }
+  to   { transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(1);   opacity: 1; }
+}
+
+@keyframes placeOut {
+  from { transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(1);   opacity: 1; }
+  to   { transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(0.4); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.placed {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rotation, 0deg)) scale(0.5);
+  opacity: 0;
+  background: color-mix(in srgb, var(--muted) 100%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 8px;
+  padding: 0;
+  text-align: center;
+  cursor: move;
+  user-select: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  transition: border-color .15s, box-shadow .15s;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.placed--in {
+  animation: placeIn .15s ease-out forwards;
+}
+
+.placed--out {
+  animation: placeOut .15s ease-in forwards;
+  pointer-events: none;
+}
+
+/* 1. Per-type hover glow */
+.placed:hover {
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 40%, transparent);
+  border-color: var(--accent);
+}
+
+/* 2. Selection ring */
+.placed--selected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px var(--accent), 0 4px 24px color-mix(in srgb, var(--accent) 35%, transparent) !important;
+}
+
+.placed-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: visible;
+  border-radius: 8px;
+}
+
+.placed .label  { font-size: 10px; color: #888; margin-top: 2px; text-transform: capitalize; }
+.placed .coords { font-size: 9px;  color: #555; margin-top: 1px; }
+
+.placed .remove {
+  position: absolute;
+  top: -10px; right: -10px;
+  width: 22px; height: 22px;
+  background: #ff4444;
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  opacity: 0;
+  transition: opacity .15s, transform .15s;
+  transform: scale(0.7);
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,.5);
+}
+
+.placed:hover .remove,
+.placed--selected .remove {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── JSON modal ── */
+#modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+#modal-overlay.open { display: flex; }
+
+#modal {
+  background: #1a1a24;
+  border: 1px solid #2e2e42;
+  border-radius: 12px;
+  padding: 20px;
+  width: min(580px, 90vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid #2e2e42;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.modal-tab {
+  background: transparent;
+  color: #555;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .15s;
+  margin-bottom: -1px;
+}
+
+.modal-tab:hover { color: #aaa; background: transparent; box-shadow: none; }
+.modal-tab.active { color: #e0e0e0; border-bottom-color: #3b3bff; }
+
+.modal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+[hidden] { display: none !important; }
+
+/* 7. Syntax highlighting */
+#json-output {
+  background: #0d0d14;
+  border: 1px solid #2e2e42;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  white-space: pre;
+}
+
+.hl-key  { color: #7dd3fc; }   /* light blue  — keys   */
+.hl-str  { color: #86efac; }   /* green       — strings */
+.hl-num  { color: #fbbf24; }   /* amber       — numbers */
+.hl-bool { color: #f472b6; }   /* pink        — booleans */
+.hl-null { color: #94a3b8; }   /* slate       — null */
+
+#modal-actions,
+#modal-actions-import { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── Import panel ── */
+.import-file-label {
+  display: block;
+  background: #0f0f13;
+  border: 1px dashed #2e2e42;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.import-file-label:hover { border-color: #3b3bff; color: #aaa; }
+.import-file-label input { display: none; }
+
+#import-paste {
+  background: #0d0d14;
+  border: 1px solid #2e2e42;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 11px;
+  color: #7ec8e3;
+  resize: vertical;
+  min-height: 120px;
+  max-height: 260px;
+  outline: none;
+  transition: border-color .15s;
+}
+#import-paste:focus { border-color: #3b3bff; }
+
+.import-feedback { font-size: 12px; min-height: 18px; }
+.import-feedback--ok    { color: #86efac; }
+.import-feedback--warn  { color: #fbbf24; }
+.import-feedback--error { color: #f87171; }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Sandbox Toolkit</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
+
+<aside id="sidebar">
+  <h2>Assets</h2>
+  <!-- populated by sidebar.js from ASSETS -->
+</aside>
+
+<div id="main">
+  <div id="toolbar">
+    <div id="props" hidden></div>
+    <div id="toolbar-actions">
+      <button id="btn-clear"       class="btn-ghost">Clear</button>
+      <button id="btn-import-open" class="btn-ghost">↑ Import</button>
+      <button id="btn-export"      class="btn-primary">↓ Export</button>
+    </div>
+  </div>
+  <div id="canvas">
+    <div id="empty-state">
+      <span class="empty-icon">🎨</span>
+      <p>Drag an asset from the sidebar<br>or click one to place it</p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-overlay">
+  <div id="modal">
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-panel="panel-export">Export</button>
+      <button class="modal-tab"        data-panel="panel-import">Import</button>
+    </div>
+
+    <!-- Export panel -->
+    <div id="panel-export" class="modal-panel">
+      <div id="json-output"></div>
+      <div id="modal-actions">
+        <button id="btn-copy">Copy</button>
+        <button id="btn-download">Download</button>
+        <button id="btn-close" class="btn-ghost">Close</button>
+      </div>
+    </div>
+
+    <!-- Import panel -->
+    <div id="panel-import" class="modal-panel" hidden>
+      <label class="import-file-label">
+        <input type="file" id="import-file" accept=".json" />
+        Choose file or drop JSON below
+      </label>
+      <textarea id="import-paste" placeholder="…or paste JSON here"></textarea>
+      <div id="import-feedback" class="import-feedback"></div>
+      <div id="modal-actions-import">
+        <button id="btn-load" class="btn-primary">Load</button>
+        <button id="btn-close-import" class="btn-ghost">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
