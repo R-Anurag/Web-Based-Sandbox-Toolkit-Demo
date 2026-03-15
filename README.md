@@ -1,6 +1,12 @@
 # AR Sandbox Toolkit
 
-A minimal web-based sandbox for placing assets on a canvas and exporting their positions as JSON.
+A minimal web-based sandbox for placing 3D assets on a canvas and exporting their positions as JSON.
+
+## Screenshots
+
+![Assets on canvas](Screenshots/assets.png)
+
+![Export modal](Screenshots/export.png)
 
 ## Quick Start
 
@@ -26,24 +32,37 @@ npx serve .
 | Reposition | Click and drag any placed item |
 | Remove | Hover over an item → click the **✕** badge |
 | Clear all | Click **Clear** in the toolbar |
-| Export | Click **Export JSON** → copy to clipboard or download `placements.json` |
+| Export | Click **↓ Export** → copy to clipboard or download `placements.json` |
+| Import | Click **↑ Import** → paste or load a JSON file |
 
 ## Export Format
 
 ```json
 {
+  "version": "2.0",
   "exportedAt": "2025-07-14T10:00:00.000Z",
   "canvasSize": { "width": 1200, "height": 800 },
   "placements": [
-    { "id": 1, "type": "cube",   "x": 320, "y": 240 },
-    { "id": 2, "type": "light",  "x": 640, "y": 400 },
-    { "id": 3, "type": "marker", "x": 900, "y": 180 }
+    {
+      "id": 1,
+      "type": "cube",
+      "model": { "src": "models/cube.glb", "format": "glb" },
+      "transform": {
+        "x": 320, "y": 240,
+        "xNorm": 0.266667, "yNorm": 0.3,
+        "width": 80, "height": 80,
+        "scale": 1, "rotation": 0
+      },
+      "meta": { "label": "Cube", "icon": "📦", "color": "#f59e0b" }
+    }
   ]
 }
 ```
 
 - `x` / `y` — pixel coordinates relative to the top-left corner of the canvas
-- `canvasSize` — viewport dimensions at export time (useful for normalising coordinates)
+- `xNorm` / `yNorm` — normalised coordinates (0–1) relative to canvas size
+- `canvasSize` — viewport dimensions at export time
+- `scale` / `rotation` — transform applied to the placed item
 
 ## Assets
 
@@ -55,9 +74,14 @@ npx serve .
 | 📷 | Camera |
 | 📍 | Marker |
 
-## Screenshot
+## Regenerating Models
 
-![Sandbox screenshot](screenshot.png)
+The `.glb` models in `models/` are pre-built. To regenerate them:
+
+```bash
+npm install
+npm run generate
+```
 
 ## Stack
 
